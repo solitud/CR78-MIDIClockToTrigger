@@ -4,16 +4,16 @@
  * 2019
  */
 
+#include <digitalWriteFast.h>
 #include <MIDI.h>
 
 MIDI_CREATE_DEFAULT_INSTANCE(); // Created and binds the MIDI interface to the default hardware Serial port
 
-int const ledClockPin               = LED_BUILTIN;
-int const outputStartStopPin        = 5;
-int const outputClockPin            = 6;
-int const outputWritePin            = 7;
-
-int const inputButtonPin            = 3;
+#define ledClockPin               LED_BUILTIN
+#define outputStartStopPin        5
+#define outputClockPin            6
+#define outputWritePin            7
+#define inputButtonPin            3
 
 unsigned int clockDivider           = 2;
 unsigned int quantDivider           = 6; // 96 / 16
@@ -31,12 +31,11 @@ boolean trigBtnIsEnabled            = true;
 
 
 void setup() {
-    pinMode(ledClockPin, OUTPUT);
-    pinMode(outputStartStopPin, OUTPUT);
-    pinMode(outputClockPin, OUTPUT);
-    pinMode(outputWritePin, OUTPUT);
-
-    pinMode(inputButtonPin, INPUT);
+    pinModeFast(ledClockPin, OUTPUT);
+    pinModeFast(outputStartStopPin, OUTPUT);
+    pinModeFast(outputClockPin, OUTPUT);
+    pinModeFast(outputWritePin, OUTPUT);
+    pinModeFast(inputButtonPin, INPUT);
 
     MIDI.begin(MIDI_CHANNEL_OMNI);
 
@@ -53,26 +52,25 @@ void loop() {
     MIDI.read(10);
     unsigned long currentTimeMicros = micros();
     if((currentTimeMicros - openedGateAt) >= gateTimeMicros) {
-        digitalWrite(outputClockPin, LOW);
+        digitalWriteFast(outputClockPin, LOW);
     }
     if((currentTimeMicros - openedStartStopGateAt) >= 750) {
-        digitalWrite(ledClockPin, LOW);
-        digitalWrite(outputStartStopPin, LOW);
+        digitalWriteFast(ledClockPin, LOW);
+        digitalWriteFast(outputStartStopPin, LOW);
     }
 
     if((currentTimeMicros - openedWriteGateAt) >= gateTimeMicros) {
-        digitalWrite(outputWritePin, LOW);
+        digitalWriteFast(outputWritePin, LOW);
     }
 
     if(CR78wasTriggered) {
         if(inc % quantDivider == 0) {
-            digitalWrite(outputWritePin, HIGH);
+            digitalWriteFast(outputWritePin, HIGH);
             openedWriteGateAt = currentTimeMicros;
             CR78wasTriggered = false;
         }
     } else {
-        boolean trigBtnState = digitalRead(inputButtonPin);
-        if(trigBtnState) {
+        if(digitalReadFast(inputButtonPin) == HIGH) {
             if(trigBtnIsEnabled) {
                 CR78wasTriggered = true;
                 trigBtnIsEnabled = false;
@@ -80,14 +78,13 @@ void loop() {
         } else {
             trigBtnIsEnabled = true;
         }
-
     }
 }
 
 void doClock(void) {
     unsigned long currentTimeMicros = micros();
     if(inc % clockDivider == 0) {
-        digitalWrite(outputClockPin, HIGH);
+        digitalWriteFast(outputClockPin, HIGH);
         openedGateAt = currentTimeMicros;
     }
     inc++;
@@ -100,7 +97,7 @@ void doWrite(byte channel, byte note, byte velocity) {
 void doStartStop(void) {
     unsigned long currentTimeMicros = micros();
     inc = 0;
-    digitalWrite(ledClockPin, HIGH);
-    digitalWrite(outputStartStopPin, HIGH);
+    digitalWriteFast(ledClockPin, HIGH);
+    digitalWriteFast(outputStartStopPin, HIGH);
     openedStartStopGateAt = currentTimeMicros;
 }

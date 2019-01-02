@@ -11,4 +11,4 @@ The interface listens on channel 10 for incoming MIDI notes.
 MIDI notes will be quantized to 16ths and will generate a trigger for the TS-1 input.
 That makes it possible to record paterns to the sequencer in realtime.
 
-Depends on the [Arduino MIDI Library](https://github.com/FortySevenEffects/arduino_midi_library)
+Depends on the [Arduino MIDI Library](https://github.com/FortySevenEffects/arduino_midi_library) and [watterott/Arduino-Libs/digitalWriteFast](https://github.com/watterott/Arduino-Libs/tree/master/digitalWriteFast)
