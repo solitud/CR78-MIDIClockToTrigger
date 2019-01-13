@@ -35,7 +35,7 @@ void setup() {
     pinModeFast(outputStartStopPin, OUTPUT);
     pinModeFast(outputClockPin, OUTPUT);
     pinModeFast(outputWritePin, OUTPUT);
-    pinModeFast(inputButtonPin, INPUT_PULLUP);
+    pinMode(inputButtonPin, INPUT_PULLUP);
 
     MIDI.begin(MIDI_CHANNEL_OMNI);
 
@@ -61,11 +61,13 @@ void loop() {
 
     if((currentTimeMicros - openedWriteGateAt) >= gateTimeMicros) {
         digitalWriteFast(outputWritePin, LOW);
+        digitalWriteFast(ledClockPin, LOW);
     }
 
     if(CR78wasTriggered) {
         if(inc % quantDivider == 0) {
             digitalWriteFast(outputWritePin, HIGH);
+            digitalWriteFast(ledClockPin, HIGH);
             openedWriteGateAt = currentTimeMicros;
             CR78wasTriggered = false;
         }
