@@ -10,10 +10,10 @@
 MIDI_CREATE_DEFAULT_INSTANCE(); // Created and binds the MIDI interface to the default hardware Serial port
 
 #define ledClockPin               LED_BUILTIN
-#define outputStartStopPin        5
-#define outputClockPin            6
-#define outputWritePin            7
-#define inputButtonPin            3
+#define outputClockPin            2
+#define outputWritePin            3
+#define outputStartStopPin        4
+#define inputButtonPin            5
 
 unsigned int clockDivider           = 2;
 unsigned int quantDivider           = 6; // 96 / 16
@@ -35,7 +35,7 @@ void setup() {
     pinModeFast(outputStartStopPin, OUTPUT);
     pinModeFast(outputClockPin, OUTPUT);
     pinModeFast(outputWritePin, OUTPUT);
-    pinModeFast(inputButtonPin, INPUT);
+    pinModeFast(inputButtonPin, INPUT_PULLUP);
 
     MIDI.begin(MIDI_CHANNEL_OMNI);
 
@@ -55,7 +55,7 @@ void loop() {
         digitalWriteFast(outputClockPin, LOW);
     }
     if((currentTimeMicros - openedStartStopGateAt) >= 750) {
-        digitalWriteFast(ledClockPin, LOW);
+        //digitalWriteFast(ledClockPin, LOW);
         digitalWriteFast(outputStartStopPin, LOW);
     }
 
@@ -70,7 +70,7 @@ void loop() {
             CR78wasTriggered = false;
         }
     } else {
-        if(digitalReadFast(inputButtonPin) == HIGH) {
+        if(digitalReadFast(inputButtonPin) == LOW) { //Btn is pressed, internal Pullup
             if(trigBtnIsEnabled) {
                 CR78wasTriggered = true;
                 trigBtnIsEnabled = false;
@@ -97,7 +97,7 @@ void doWrite(byte channel, byte note, byte velocity) {
 void doStartStop(void) {
     unsigned long currentTimeMicros = micros();
     inc = 0;
-    digitalWriteFast(ledClockPin, HIGH);
+    //digitalWriteFast(ledClockPin, HIGH);
     digitalWriteFast(outputStartStopPin, HIGH);
     openedStartStopGateAt = currentTimeMicros;
 }
