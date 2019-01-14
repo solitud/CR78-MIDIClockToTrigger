@@ -29,7 +29,7 @@ unsigned long const gateTimeMicros  = 5100; //min 5 millisec
 
 boolean CR78wasTriggered            = false;
 boolean trigBtnIsEnabled            = true;
-boolean trigBtnWasPressed         = true;
+boolean trigBtnWasPressed           = true;
 
 void setup() {
     pinModeFast(ledClockPin, OUTPUT);
@@ -86,7 +86,7 @@ void loop() {
             }
             trigBtnWasPressed = false;
 
-            if((currentTimeMillis - trigBtnReleaseTime) > 250) {
+            if((currentTimeMillis - trigBtnReleaseTime) > 50) {
                 trigBtnIsEnabled = true;
             }
         }
