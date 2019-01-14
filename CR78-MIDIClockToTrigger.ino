@@ -23,12 +23,13 @@ unsigned int inc                    = 0;
 unsigned long openedGateAt          = 0;
 unsigned long openedStartStopGateAt = 0;
 unsigned long openedWriteGateAt     = 0;
+unsigned long trigBtnReleaseTime    = 0;
 
 unsigned long const gateTimeMicros  = 5100; //min 5 millisec
 
 boolean CR78wasTriggered            = false;
 boolean trigBtnIsEnabled            = true;
-
+boolean trigBtnWasPressed         = true;
 
 void setup() {
     pinModeFast(ledClockPin, OUTPUT);
@@ -50,6 +51,7 @@ void setup() {
 
 void loop() {
     MIDI.read(10);
+    unsigned long currentTimeMillis = millis();
     unsigned long currentTimeMicros = micros();
     if((currentTimeMicros - openedGateAt) >= gateTimeMicros) {
         digitalWriteFast(outputClockPin, LOW);
@@ -72,13 +74,21 @@ void loop() {
             CR78wasTriggered = false;
         }
     } else {
-        if(digitalReadFast(inputButtonPin) == LOW) { //Btn is pressed, internal Pullup
+        if(digitalReadFast(inputButtonPin) == LOW) { //Btn is pressed (internal Pullup)
             if(trigBtnIsEnabled) {
                 CR78wasTriggered = true;
                 trigBtnIsEnabled = false;
+                trigBtnWasPressed = true;
             }
         } else {
-            trigBtnIsEnabled = true;
+            if(trigBtnWasPressed == true) {
+                trigBtnReleaseTime = currentTimeMillis;
+            }
+            trigBtnWasPressed = false;
+
+            if((currentTimeMillis - trigBtnReleaseTime) > 250) {
+                trigBtnIsEnabled = true;
+            }
         }
     }
 }
