@@ -10,10 +10,10 @@
 MIDI_CREATE_DEFAULT_INSTANCE(); // Created and binds the MIDI interface to the default hardware Serial port
 
 #define ledClockPin               LED_BUILTIN
-#define outputClockPin            2
-#define outputWritePin            3
-#define outputStartStopPin        4
-#define inputButtonPin            5
+#define outputClockPin            3
+#define outputWritePin            4
+#define outputStartStopPin        5
+#define inputButtonPin            2
 
 unsigned int clockDivider           = 2;
 unsigned int quantDivider           = 6; // 96 / 16
