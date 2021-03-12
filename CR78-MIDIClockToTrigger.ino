@@ -140,7 +140,7 @@ void doStartStop(void) {
     } else {
       digitalWriteFast(ledClockPin, LOW);
     }
-    inc = 0;
+    //inc = 0;
     digitalWriteFast(outputClockPin, HIGH);
     digitalWriteFast(outputStartStopPin, HIGH);
     openedStartStopGateAt = currentTimeMicros;
@@ -149,6 +149,7 @@ void doStartStop(void) {
 void doStart(void) {
   sequencerIsRunning = true;
   doStartStop();
+  inc = 0;
 }
 
 void doContinue(void) {
